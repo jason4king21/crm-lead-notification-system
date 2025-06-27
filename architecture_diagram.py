@@ -7,7 +7,7 @@ from diagrams.aws.management import Cloudwatch
 from diagrams.onprem.client import Users
 
 
-with Diagram("CRM Lead Processing & Notification System", show=False, direction="TB"):
+with Diagram("architecture_diagram", show=False, direction="TB"):
     crm = Users("CRM Webhook\n(Close.com)")
 
     with Cluster("AWS"):
