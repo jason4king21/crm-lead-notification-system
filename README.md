@@ -13,7 +13,7 @@ This project implements a real-time, serverless lead processing pipeline using A
 
 ## 📊 Architecture Diagram
 
-![architecture](architecture_diagram.png)
+![architecture](architecture_diagram2.png)
 
 ## 🗂️ Project Structure
 
