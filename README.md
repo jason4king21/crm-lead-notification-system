@@ -7,8 +7,8 @@ This project implements a real-time, serverless lead processing pipeline using A
 - ✅ Real-time capture of new leads from Close CRM
 - ⏳ 10-minute delay buffer using SQS to allow CRM updates
 - 🔍 Lookup of enriched lead owner data from S3
-- 📬 Sends notifications via Amazon SNS (email or SMS)
-- ☁️ Fully serverless using Lambda, S3, EventBridge, and SNS
+- 📬 Sends notifications via Amazon SNS (email)
+- ☁️ Fully serverless using Lambda, S3, and SNS
 - 🔐 Secure, credential-free architecture
 
 ## 📊 Architecture Diagram
@@ -30,8 +30,8 @@ This project implements a real-time, serverless lead processing pipeline using A
 1. Webhook Handler Lambda receives real-time lead data
 2. Stores raw event as JSON in S3
 3. Publishes a delayed message to SQS
-4. Enrichment Lambda pulls from queue and merges lead owner data
-5. Sends an SNS email alert or EventBridge notification
+4. Enrichment Lambda pulls from queue and merges lead owner data from S3 data
+5. Sends an SNS email alert notification
 
 ## 📬 Notification Example
 
@@ -51,4 +51,4 @@ Funnel: DE ACADEMY Direct VSL
 - [x] Delay allows CRM to assign owners
 - [x] Enrichment works by matching `lead_id`
 - [x] Team receives notifications
-- [x] Logs and DLQ handle retry/failure scenarios
+- [x] Logs handle retry/failure scenarios
