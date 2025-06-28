@@ -21,7 +21,6 @@ def lambda_handler(event, context):
 
     sqs.send_message(
         QueueUrl=queue_url,
-        DelaySeconds=0,
         MessageBody=json.dumps({"lead_id": lead_id})
     )
 
