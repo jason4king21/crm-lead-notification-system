@@ -12,8 +12,10 @@ SNS_TOPIC_ARN = 'arn:aws:sns:us-east-2:622025528750:new-lead-notifications'
 RAW_BUCKET = "crm-lead-data"
 RAW_PREFIX = "source/"
 TARGET_PREFIX = "target/"
-LOOKUP_BUCKET = "dea-lead-owner"
+# LOOKUP_BUCKET = "dea-lead-owner"
 
+PUBLIC_LOOKUP_BUCKET = "dea-lead-owner"
+PUBLIC_LOOKUP_URL = f"https://{PUBLIC_LOOKUP_BUCKET}.s3.us-east-1.amazonaws.com"
 
 SENDER = "jason4king21@gmail.com"
 RECIPIENT = "jason4king21@gmail.com"
@@ -53,10 +55,11 @@ def lambda_handler(event, context):
             raw_obj = s3.get_object(Bucket=RAW_BUCKET, Key=raw_key)
             raw_data = json.loads(raw_obj["Body"].read())
 
-            # Read enrichment data
-            lookup_key = f"dea-lead-owner/{lead_id}.json"
-            lookup_obj = s3.get_object(Bucket=RAW_BUCKET, Key=lookup_key)
-            enrichment = json.loads(lookup_obj["Body"].read())
+            # Read lead from public S3 URL
+            lead_url = f"{PUBLIC_LOOKUP_URL}/{lead_id}.json"
+            print(f"Fetching lead from {lead_url}")
+            response = urllib.request.urlopen(lead_url)
+            enrichment = json.loads(response.read())
 
             # Merge enrichment
             raw_data["event"]["data"]["lead_owner"] = enrichment.get("lead_owner", "Unassigned")
@@ -82,8 +85,11 @@ def lambda_handler(event, context):
                 "funnel": enrichment.get("funnel", "")
             })
 
+        except urllib.error.HTTPError as e:
+            print(f"❌ HTTP error for {lead_id}: {e.code} {e.reason}")
+        except ClientError as ce:
+            print(f"❌ S3 error for {lead_id}: {str(ce)}")
         except Exception as e:
-            print(f"❌ Error processing lead {lead_id}: {str(e)}")
-            # Optionally publish to a DLQ or CloudWatch for alerting
+            print(f"❌ General error for {lead_id}: {str(e)}")
 
     return {"statusCode": 200}
